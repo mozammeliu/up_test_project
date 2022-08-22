@@ -44,6 +44,14 @@ class User_model extends CI_Model {
 	}
 
 
+	//get user login data
+	public function get_login_data($u_data)
+	{
+		$this->db->where($u_data);
+		return $this->db->get('users')->row();
+	}
+
+
 
 
 }

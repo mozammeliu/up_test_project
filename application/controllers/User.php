@@ -27,7 +27,7 @@ class User extends CI_Controller {
 		if((isset($user_info['logged_in']))&&($user_info['logged_in']==true)){
 
 		}else{
-			redirect(site_url('user/registration'));
+			redirect(site_url('user/login'));
 		}
 
 		$user_data['user_data']=$this->User_model->get_user_data($user_info['email']);
@@ -140,6 +140,62 @@ class User extends CI_Controller {
 
 		}
 	}
+
+
+	//login the user
+	public function login()
+	{
+		$data=array();
+
+		$user_info=$this->session->userdata();
+
+		//var_dump($user_info);
+
+		if((isset($user_info['logged_in']))&&($user_info['logged_in']==true)){
+			redirect(site_url('user'));
+		}
+
+
+		if((isset($_POST['email']))&&(isset($_POST['password']))){
+
+			$user_data=array(
+				'email'=>$_POST['email'],
+				'password'=>md5($_POST['password'])
+			);
+			$user=$this->User_model->get_login_data($user_data);
+
+			if($user==null)
+			{
+				$data['error']=true;
+				$data['error_reason']="Email or Password doesn't matched or not found<br/> Please try again to login";
+			}else{
+				//var_dump($user);
+
+				$newdata = array(
+					'email'     => $user->email,
+					'logged_in' => TRUE
+				);
+				$this->session->set_userdata($newdata);
+				redirect(site_url('user'));
+				die();
+
+			}
+		}
+
+
+		/**$user_data=$this->User_model->get_login_data($user_info['email']);
+
+
+		$newdata = array(
+			'email'     => $email,
+			'logged_in' => TRUE
+		);
+		$this->session->set_userdata($newdata);**/
+
+		$this->load->view('login',$data);
+	}
+
+
 
 
 	//logout the user
